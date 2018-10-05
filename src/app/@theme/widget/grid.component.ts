@@ -1,13 +1,6 @@
-import {
-  Component,
-  ComponentFactoryResolver,
-  ElementRef,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
-import { NgxGridConfig, NgxGridsterService, NgxWidgetBoundingRect } from './gridster.service';
+import { Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { NgxGridConfig, NgxGridsterService } from './gridster.service';
+import { WIDGETS_REGISTRY } from './widgets-lib/widgets-lib.module';
 
 @Component({
   selector: 'ngx-widget-stub',
@@ -26,6 +19,16 @@ export class NgxWidgetStubComponent {
 
 @Component({
   selector: 'ngx-grid',
+  styles: [`
+    /deep/ [data-col] {
+      overflow: hidden;
+    }
+
+    /deep/ [data-col] /deep/ nb-card {
+      margin: 0;
+      height: 100% !important;
+    }
+  `],
   template: `
     <ng-template></ng-template>
   `,
@@ -37,26 +40,13 @@ export class NbGridComponent implements OnInit {
 
   constructor(protected gridster: NgxGridsterService,
               protected elementRef: ElementRef,
-              protected cfr: ComponentFactoryResolver) {
+              @Inject(WIDGETS_REGISTRY) protected widgetsRegistry) {
+    this.gridster.setGridComponent(this);
   }
 
   ngOnInit() {
     const config = this.createGridConfig();
     this.gridster.createGrid(config);
-    this.gridster.load()
-      .forEach(this.addWidget.bind(this));
-  }
-
-  addWidget(rect: Partial<NgxWidgetBoundingRect>) {
-    const factory = this.cfr.resolveComponentFactory(NgxWidgetStubComponent);
-    const componentRef = this.anchor.createComponent(factory);
-    this.gridster.addWidget(
-      componentRef.location.nativeElement,
-      rect.width,
-      rect.height,
-      rect.left,
-      rect.top,
-    );
   }
 
   protected createGridConfig(): NgxGridConfig {

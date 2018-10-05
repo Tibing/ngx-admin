@@ -7,6 +7,7 @@ import { NbWidgetDirective } from './widget.directive';
 import { NbGridComponent, NgxWidgetStubComponent } from './grid.component';
 import { NgxGridsterService } from './gridster.service';
 import { NgxWidgetLibComponent } from './widget-lib.component';
+import { NgxWidgetsLibModule } from './widgets-lib/widgets-lib.module';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { NgxWidgetLibComponent } from './widget-lib.component';
     CommonModule,
     NbCardModule,
     NbListModule,
+    NgxWidgetsLibModule,
   ],
   exports: [NbWidgetDirective, NbGridComponent, NgxWidgetLibComponent, NgxWidgetStubComponent],
   declarations: [NbWidgetDirective, NbGridComponent, NgxWidgetLibComponent, NgxWidgetStubComponent],

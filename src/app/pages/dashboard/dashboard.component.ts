@@ -80,10 +80,6 @@ export class DashboardComponent implements OnDestroy {
       });
   }
 
-  addWidget() {
-    this.grid.addWidget({});
-  }
-
   ngOnDestroy() {
     this.alive = false;
   }

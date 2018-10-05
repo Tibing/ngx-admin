@@ -1,10 +1,13 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { ComponentFactoryResolver, Inject, Injectable } from '@angular/core';
+import { NbGridComponent } from './grid.component';
+import { WIDGETS_REGISTRY } from './widgets-lib/widgets-lib.module';
 
 export class NgxWidgetBoundingRect {
-  top: number;
-  left: number;
-  height: number;
-  width: number;
+  top?: number;
+  left?: number;
+  height?: number;
+  width?: number;
+  widget: string;
 }
 
 export class NgxGridConfig {
@@ -23,6 +26,18 @@ export class NgxGridConfig {
 export class NgxGridsterService {
 
   grid;
+  protected gridComponent: NbGridComponent;
+  protected widgets: NgxWidgetBoundingRect[] = [];
+
+  constructor(@Inject(WIDGETS_REGISTRY) protected widgetsRegistry,
+              protected cfr: ComponentFactoryResolver,
+  ) {
+
+  }
+
+  setGridComponent(gridComponent: NbGridComponent) {
+    this.gridComponent = gridComponent;
+  }
 
   createGrid(config: NgxGridConfig) {
     this.grid = $(config.gridElement)
@@ -39,10 +54,29 @@ export class NgxGridsterService {
         widget_selector: '[ngxWidget]',
       })
       .data('gridster');
+    this.widgets = this.load() || [];
+    this.widgets.forEach((widget: NgxWidgetBoundingRect) => {
+      this.renderWidget(widget);
+    });
   }
 
-  addWidget(elementRef: ElementRef, sizex?, sizey?, col?, row?) {
-    this.grid.add_widget(elementRef, sizex, sizey, col, row);
+  addWidget(widget: NgxWidgetBoundingRect) {
+    this.widgets.push(widget);
+    this.renderWidget(widget);
+    this.serialize();
+  }
+
+  renderWidget(widget: Partial<NgxWidgetBoundingRect>) {
+    const factory = this.cfr.resolveComponentFactory(this.widgetsRegistry[widget.widget]);
+    const componentRef = this.gridComponent.anchor.createComponent(factory);
+    componentRef.location.nativeElement.setAttribute('ngxWidget', '');
+    this.grid.add_widget(
+      componentRef.location.nativeElement,
+      widget.width,
+      widget.height,
+      widget.left,
+      widget.top,
+    );
   }
 
   enable() {
@@ -55,21 +89,22 @@ export class NgxGridsterService {
     this.grid.disable_resize();
   }
 
+  load(): NgxWidgetBoundingRect[] {
+    return JSON.parse(localStorage.getItem('widgets'));
+  }
+
   protected serialize() {
     const serialized = this.grid.serialize()
       .map(this.cast.bind(this));
     this.persist(serialized);
   }
 
-  load(): NgxWidgetBoundingRect[] {
-    return JSON.parse(localStorage.getItem('widgets'));
-  }
-
   protected persist(widgetsData: NgxWidgetBoundingRect) {
     localStorage.setItem('widgets', JSON.stringify(widgetsData));
   }
 
-  protected cast({ col, row, size_x, size_y }): NgxWidgetBoundingRect {
-    return { top: row, left: col, width: size_x, height: size_y };
+  // TODO get widget descriptor somehow
+  protected cast({ col, row, size_x, size_y }, i): NgxWidgetBoundingRect {
+    return { top: row, left: col, width: size_x, height: size_y, widget: this.widgets[i].widget };
   }
 }

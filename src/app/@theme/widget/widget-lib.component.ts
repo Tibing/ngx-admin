@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { range } from '@nebular/theme/components/calendar-kit/helpers';
+import { Component, Inject } from '@angular/core';
+import { WIDGETS_REGISTRY } from './widgets-lib/widgets-lib.module';
+import { NgxGridsterService } from './gridster.service';
 
 @Component({
   selector: 'ngx-widget-lib',
@@ -12,18 +13,22 @@ import { range } from '@nebular/theme/components/calendar-kit/helpers';
   `],
   template: `
     <nb-list>
-      <nb-list-item *ngFor="let comp of comps">
-        <nb-card>
-          <nb-card-header>{{ comp }}</nb-card-header>
-          <nb-card-body>
-            <div class="stub"></div>
-          </nb-card-body>
-        </nb-card>
+      <nb-list-item *ngFor="let comp of comps" (click)="addWidget(comp[0])">
+        <ng-container [ngComponentOutlet]="comp[1]"></ng-container>
       </nb-list-item>
     </nb-list>
   `,
 })
 
 export class NgxWidgetLibComponent {
-  comps = range(20).map(i => `Widget type #${i}`);
+  comps = [];
+
+  constructor(@Inject(WIDGETS_REGISTRY) widgetsRegistry,
+              protected gridsterService: NgxGridsterService) {
+    this.comps = Object.entries(widgetsRegistry);
+  }
+
+  addWidget(widget: string) {
+    this.gridsterService.addWidget({ widget });
+  }
 }
