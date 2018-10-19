@@ -60,6 +60,11 @@ export class NgxGridsterService {
     });
   }
 
+  clear() {
+    localStorage.clear();
+    this.grid.remove_all_widgets();
+  }
+
   addWidget(widget: NgxWidgetBoundingRect) {
     this.widgets.push(widget);
     this.renderWidget(widget);
