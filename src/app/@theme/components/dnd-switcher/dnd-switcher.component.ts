@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { NgxGridsterService } from '../../widget/gridster.service';
+import { NgxGridsterService } from '../../../../../projects/dnd/src/lib/gridster.service';
 
 @Component({
   selector: 'ngx-dnd-switcher',

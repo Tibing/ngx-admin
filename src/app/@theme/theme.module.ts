@@ -2,6 +2,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxWidgetModule } from '@chammily/dnd';
 
 import {
   NbActionsModule,
@@ -44,7 +45,6 @@ import {
 import { DEFAULT_THEME } from './styles/theme.default';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { CORPORATE_THEME } from './styles/theme.corporate';
-import { NgxWidgetModule } from './widget/widget.module';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 

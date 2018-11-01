@@ -1,7 +1,7 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators/takeWhile';
-import { NbGridComponent } from '../../@theme/widget/grid.component';
+import { NbGridComponent } from '../../../../projects/dnd/src/lib/grid.component';
 
 interface CardSettings {
   title: string;

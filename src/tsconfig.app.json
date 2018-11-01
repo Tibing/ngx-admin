@@ -11,6 +11,9 @@
       ],
       "@nebular/*": [
         "../node_modules/@nebular/*"
+      ],
+      "@chammily/dnd": [
+        "../projects/dnd/src/public_api.ts"
       ]
     }
   },

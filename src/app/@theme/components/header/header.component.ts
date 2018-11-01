@@ -4,7 +4,7 @@ import { NbMenuService, NbSidebarService } from '@nebular/theme';
 import { UserService } from '../../../@core/data/users.service';
 import { AnalyticsService } from '../../../@core/utils/analytics.service';
 import { LayoutService } from '../../../@core/data/layout.service';
-import { NgxGridsterService } from '../../widget/gridster.service';
+import { NgxGridsterService } from '../../../../../projects/dnd/src/lib/gridster.service';
 
 @Component({
   selector: 'ngx-header',
