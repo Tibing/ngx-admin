@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { ChGridsterService, NgxGridConfig } from './gridster.service';
+import { NgxGridConfig } from './gridster.service';
+import { ChGrid } from './grid';
 
 
 @Component({
@@ -23,7 +24,7 @@ import { ChGridsterService, NgxGridConfig } from './gridster.service';
 export class ChGridComponent implements OnInit {
   @ViewChild(TemplateRef, { read: ViewContainerRef }) anchor: ViewContainerRef;
 
-  constructor(protected gridster: ChGridsterService,
+  constructor(protected gridster: ChGrid,
               protected elementRef: ElementRef) {
     this.gridster.setGridComponent(this);
   }

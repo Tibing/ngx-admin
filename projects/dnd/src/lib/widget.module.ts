@@ -7,6 +7,7 @@ import { ChGridComponent } from './grid.component';
 import { ChWidgetLibComponent } from './widget-lib.component';
 import { ChWidgetsLibModule } from './widgets-lib/widgets-lib.module';
 import { ChGridsterService } from './gridster.service';
+import { ChGrid } from './grid';
 
 
 @NgModule({
@@ -23,7 +24,7 @@ export class ChWidgetModule {
   static forRoot(): ModuleWithProviders {
     return <ModuleWithProviders>{
       ngModule: ChWidgetModule,
-      providers: [ChGridsterService],
+      providers: [{ provide: ChGrid, useClass: ChGridsterService }],
     };
   }
 }
