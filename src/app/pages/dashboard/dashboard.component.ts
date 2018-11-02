@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators/takeWhile';
 import { ChGridComponent } from '../../../../projects/dnd/src/lib/grid.component';
@@ -14,7 +14,7 @@ interface CardSettings {
   styleUrls: ['./dashboard.component.scss'],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent implements OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   @ViewChild(ChGridComponent) grid: ChGridComponent;
   lightCard: CardSettings = {
@@ -78,6 +78,9 @@ export class DashboardComponent implements OnDestroy {
       .subscribe(theme => {
         this.statusCards = this.statusCardsByThemes[theme.name];
       });
+  }
+
+  ngOnInit() {
   }
 
   ngOnDestroy() {

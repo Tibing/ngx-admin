@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ChGrid } from '../../../../../projects/dnd/src/lib/grid';
+import { ChGridsterService } from '../../../../../projects/dnd/src/lib/gridster.service';
 
 @Component({
   selector: 'ngx-dnd-switcher',
@@ -20,7 +20,7 @@ export class DndSwitcherComponent {
 
   @Input() vertical: boolean = false;
 
-  constructor(protected grid: ChGrid) {
+  constructor(protected grid: ChGridsterService) {
   }
 
   toggleDirection(enabled: boolean) {

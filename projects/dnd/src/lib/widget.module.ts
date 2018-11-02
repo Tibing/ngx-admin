@@ -8,6 +8,7 @@ import { ChWidgetLibComponent } from './widget-lib.component';
 import { ChWidgetsLibModule } from './widgets-lib/widgets-lib.module';
 import { ChGridsterService } from './gridster.service';
 import { ChGrid } from './grid';
+import { GridsterModule } from 'angular-gridster2';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { ChGrid } from './grid';
     NbCardModule,
     NbListModule,
     ChWidgetsLibModule,
+    GridsterModule,
   ],
   exports: [ChGridComponent, ChWidgetLibComponent],
   declarations: [ChGridComponent, ChWidgetLibComponent],

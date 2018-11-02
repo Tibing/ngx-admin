@@ -1,42 +1,43 @@
-import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { NgxGridConfig } from './gridster.service';
-import { ChGrid } from './grid';
+import { Component } from '@angular/core';
+import { GridsterConfig } from 'angular-gridster2';
+import { ChGridsterService, ChGridsterWidget } from './gridster.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 @Component({
   selector: 'ch-grid',
   styles: [`
-    /deep/ [data-col] {
-      overflow: hidden;
+    :host .disabled {
+      pointer-events: none;
     }
 
-    /deep/ [data-col] /deep/ nb-card {
-      margin: 0;
-      height: 100% !important;
+    gridster-item {
+      background: none;
     }
   `],
   template: `
-    <ng-template></ng-template>
+    <gridster [options]="options$ | async">
+      <gridster-item [item]="widget" *ngFor="let widget of widgets$ | async">
+        <div [class.disabled]="disabled$ | async">
+          <ng-template [ngComponentOutlet]="widget.component"></ng-template>
+        </div>
+      </gridster-item>
+    </gridster>
   `,
-  host: { 'class': 'gridster' },
 })
 
-export class ChGridComponent implements OnInit {
-  @ViewChild(TemplateRef, { read: ViewContainerRef }) anchor: ViewContainerRef;
+export class ChGridComponent {
+  options$: Observable<GridsterConfig>;
+  widgets$: Observable<ChGridsterWidget[]>;
+  disabled$: Observable<boolean>;
 
-  constructor(protected gridster: ChGrid,
-              protected elementRef: ElementRef) {
-    this.gridster.setGridComponent(this);
-  }
-
-  ngOnInit() {
-    const config = this.createGridConfig();
-    this.gridster.createGrid(config);
-  }
-
-  protected createGridConfig(): NgxGridConfig {
-    return new NgxGridConfig({
-      gridElement: this.elementRef.nativeElement,
-    });
+  constructor(protected gridster: ChGridsterService) {
+    this.widgets$ = this.gridster.widgets$;
+    this.options$ = this.gridster.options$;
+    this.disabled$ = this.gridster.options$
+      .pipe(
+        map((options: GridsterConfig) => options.draggable.enabled),
+      );
   }
 }

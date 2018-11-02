@@ -1,116 +1,170 @@
-import { ComponentFactoryResolver, Injectable } from '@angular/core';
-import { ChGridComponent } from './grid.component';
+import { Injectable, Type } from '@angular/core';
 import { Widget, WidgetDefinition } from './widget-lib';
-import { ChGrid } from './grid';
 import { ChWidgetLibService } from './widget-lib.service';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
+import { map, tap } from 'rxjs/operators';
 
-export class NgxGridConfig {
-  widgetMarginX: number = 32;
-  widgetMarginY: number = 32;
-  gridColumnHeight: number = 32;
-  gridColumnWidth: number = 32;
-  gridElement: HTMLElement;
 
-  constructor(config: Partial<NgxGridConfig>) {
-    Object.assign(this, config);
+export interface ChGridsterWidget extends GridsterItem {
+  id: string;
+  instanceId: string;
+  component: Type<any>;
+}
+
+@Injectable({ providedIn: 'root' })
+export class ChWidgetStoreService {
+  load(): Observable<Widget[]> {
+    const widgets = JSON.parse(localStorage.getItem('widgets'));
+    return of(widgets || []);
+  }
+
+  persist(widgets: Widget[]): Observable<boolean> {
+    localStorage.setItem('widgets', JSON.stringify(widgets));
+    return of(true);
   }
 }
 
-@Injectable()
-export class ChGridsterService extends ChGrid {
+@Injectable({ providedIn: 'root' })
+export class ChWidgetMapperService {
+  widgetToGridsterItem(widget: Widget): GridsterItem {
+    return {
+      id: widget.id,
+      cols: widget.width,
+      rows: widget.height,
+      y: widget.top,
+      x: widget.left,
+    };
+  }
 
-  protected grid;
-  protected gridComponent: ChGridComponent;
-  protected widgets: Widget[] = [];
+  gridsterItemToWidget(gridsterItem: ChGridsterWidget): Widget {
+    return {
+      id: gridsterItem.id,
+      instanceId: gridsterItem.instanceId,
+      width: gridsterItem.cols,
+      height: gridsterItem.rows,
+      top: gridsterItem.y,
+      left: gridsterItem.x,
+    };
+  }
+
+  gridsterItemListToWidgetList(gridsterItems: ChGridsterWidget[]): Widget[] {
+    return gridsterItems.map(gridsterItem => this.gridsterItemToWidget(gridsterItem));
+  }
+
+  widgetDefinitionToGridsterItem(widgetDefinition: WidgetDefinition, instanceId: string): ChGridsterWidget {
+    return {
+      instanceId,
+      component: widgetDefinition.component,
+      id: widgetDefinition.id,
+      x: 0,
+      y: 0,
+      cols: widgetDefinition.defaultWidth,
+      rows: widgetDefinition.defaultHeight,
+    };
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class ChGridsterService {
+  protected widgets: BehaviorSubject<ChGridsterWidget[]> = new BehaviorSubject<ChGridsterWidget[]>([]);
+  readonly widgets$: Observable<ChGridsterWidget[]> = this.widgets.asObservable();
+
+  protected options: BehaviorSubject<GridsterConfig> = new BehaviorSubject<GridsterConfig>({
+    gridType: GridType.ScrollVertical,
+    compactType: CompactType.None,
+    minCols: 16,
+    maxCols: 16,
+    fixedRowHeight: 32,
+    pushItems: true,
+    draggable: {
+      enabled: true,
+    },
+    resizable: {
+      enabled: true,
+    },
+    displayGrid: DisplayGrid.None,
+    itemChangeCallback: this.onChange.bind(this),
+  });
+  readonly options$: Observable<GridsterConfig> = this.options.asObservable();
 
   constructor(protected widgetLib: ChWidgetLibService,
-              protected cfr: ComponentFactoryResolver,
-  ) {
-    super();
+              protected widgetStore: ChWidgetStoreService,
+              protected widgetMapper: ChWidgetMapperService) {
+    this.createGrid();
   }
 
-  setGridComponent(gridComponent: ChGridComponent) {
-    this.gridComponent = gridComponent;
-  }
-
-  createGrid(config: NgxGridConfig) {
-    this.grid = $(config.gridElement)
-      .gridster({
-        widget_base_dimensions: [config.gridColumnHeight, config.gridColumnWidth],
-        widget_margins: [config.widgetMarginX, config.widgetMarginY],
-        draggable: {
-          stop: this.serialize.bind(this),
-        },
-        resize: {
-          enabled: true,
-          stop: this.serialize.bind(this),
-        },
-        widget_selector: '[ngxWidget]',
-      })
-      .data('gridster');
-    this.widgets = this.load() || [];
-    this.widgets.forEach((widget: Widget) => {
-      this.renderWidget(widget);
-    });
-  }
-
-  clear() {
-    localStorage.clear();
-    this.grid.remove_all_widgets();
-  }
-
-  addWidget(widget: WidgetDefinition) {
-    const w = {
-      id: widget.id,
-      height: widget.defaultHeight,
-      width: widget.defaultWidth,
-      left: 0,
-      top: 0,
-    };
-    this.widgets.push(w);
-    this.renderWidget(w);
+  onChange(gridsterItem: ChGridsterWidget) {
+    const widget = this.widgets.getValue().find(({ instanceId }) => instanceId === gridsterItem.instanceId);
+    widget.x = gridsterItem.x;
+    widget.y = gridsterItem.y;
+    widget.cols = gridsterItem.cols;
+    widget.rows = gridsterItem.rows;
     this.serialize();
   }
 
-  renderWidget(widget: Widget) {
-    const factory = this.cfr.resolveComponentFactory(this.widgetLib.get(widget.id).component);
-    const componentRef = this.gridComponent.anchor.createComponent(factory);
-    componentRef.location.nativeElement.setAttribute('ngxWidget', '');
-    this.grid.add_widget(
-      componentRef.location.nativeElement,
-      widget.width,
-      widget.height,
-      widget.left,
-      widget.top,
-    );
+  createGrid() {
+    this.widgetStore.load()
+      .pipe(
+        map((widgets: Widget[]) => {
+          return widgets.map((widget: Widget) => {
+            const gridsterItem = this.widgetMapper.widgetToGridsterItem(widget);
+            const component = this.widgetLib.get(widget.id).component;
+
+            return { ...gridsterItem, component, id: widget.id, instanceId: widget.instanceId };
+          });
+        }),
+        tap(console.log.bind(console)),
+      )
+      .subscribe(widgets => this.widgets.next(widgets));
+  }
+
+  clear() {
+    this.widgetStore.persist([]);
+    this.widgets.next([]);
+  }
+
+  addWidget(widget: WidgetDefinition) {
+    const nextIndex = this.widgets.getValue()
+      .filter(({ id }) => id === widget.id).length;
+    const nextId = `${widget.id}-${nextIndex}`;
+    const gridsterItem = this.widgetMapper.widgetDefinitionToGridsterItem(widget, nextId);
+    this.widgets.next([...this.widgets.getValue(), gridsterItem]);
+    this.serialize();
   }
 
   enable() {
-    this.grid.enable();
-    this.grid.enable_resize();
+    this.options.next({
+      ...this.options.getValue(),
+      draggable: {
+        ...this.options.getValue().draggable,
+        enabled: true,
+      },
+      resizable: {
+        ...this.options.getValue().resizable,
+        enabled: true,
+      },
+    });
   }
 
   disable() {
-    this.grid.disable();
-    this.grid.disable_resize();
-  }
-
-  load(): Widget[] {
-    return JSON.parse(localStorage.getItem('widgets'));
+    this.options.next({
+      ...this.options.getValue(),
+      draggable: {
+        ...this.options.getValue().draggable,
+        enabled: false,
+      },
+      resizable: {
+        ...this.options.getValue().resizable,
+        enabled: false,
+      },
+    });
   }
 
   protected serialize() {
-    const serialized = this.grid.serialize()
-      .map(this.cast.bind(this));
-    this.persist(serialized);
-  }
+    const gridsterItems = this.widgets.getValue();
+    const widgets = this.widgetMapper.gridsterItemListToWidgetList(gridsterItems);
 
-  protected persist(widgetsData: Widget) {
-    localStorage.setItem('widgets', JSON.stringify(widgetsData));
-  }
-
-  // TODO get widget descriptor somehow
-  protected cast({ col, row, size_x, size_y }, i): Widget {
-    return { top: row, left: col, width: size_x, height: size_y, id: this.widgets[i].id };
+    this.widgetStore.persist(widgets);
   }
 }

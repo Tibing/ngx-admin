@@ -4,6 +4,8 @@ export interface Widget {
 
   id: string;
 
+  instanceId: string;
+
   height: number;
 
   width: number;

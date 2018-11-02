@@ -1,4 +1,5 @@
-import { WidgetDefinition } from './widget-lib';
+import { Widget, WidgetDefinition } from './widget-lib';
+import { Observable } from 'rxjs';
 
 export interface ChGridConfig<T> {
 
@@ -10,6 +11,7 @@ export interface ChGridConfig<T> {
 }
 
 export abstract class ChGrid {
+  abstract readonly widgets$: Observable<Widget[]>;
 
   abstract clear();
 

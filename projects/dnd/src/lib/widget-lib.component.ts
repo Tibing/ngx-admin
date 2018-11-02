@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { WidgetDefinition } from './widget-lib';
 import { ChWidgetLibService } from './widget-lib.service';
-import { ChGrid } from './grid';
+import { ChGridsterService } from './gridster.service';
 
 @Component({
   selector: 'ch-widget-lib',
@@ -25,7 +25,7 @@ export class ChWidgetLibComponent {
   comps: WidgetDefinition[] = [];
 
   constructor(protected widgetLib: ChWidgetLibService,
-              protected gridsterService: ChGrid) {
+              protected gridsterService: ChGridsterService) {
     this.comps = this.widgetLib.getAll();
   }
 

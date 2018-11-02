@@ -14,6 +14,6 @@ export const widgets: WidgetDefinition[] = [
     id: 'electricity',
     component: ElectricityComponent,
     defaultHeight: 8,
-    defaultWidth: 12,
+    defaultWidth: 11,
   },
 ];

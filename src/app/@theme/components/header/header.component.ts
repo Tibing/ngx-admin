@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit {
               private userService: UserService,
               private analyticsService: AnalyticsService,
               private layoutService: LayoutService,
-              private grid: ChGrid) {
+              private grid: ChGridsterService) {
   }
 
   ngOnInit() {
