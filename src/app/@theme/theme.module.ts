@@ -2,7 +2,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxWidgetModule } from '@chammily/dnd';
+import { ChWidgetModule } from '@chammily/dnd';
 
 import {
   NbActionsModule,
@@ -64,7 +64,7 @@ const NB_MODULES = [
   NgbModule,
   NbSecurityModule, // *nbIsGranted directive,
   NbProgressBarModule,
-  NgxWidgetModule,
+  ChWidgetModule,
 ];
 
 const COMPONENTS = [
@@ -105,7 +105,7 @@ const NB_THEME_PROVIDERS = [
   ).providers,
   ...NbSidebarModule.forRoot().providers,
   ...NbMenuModule.forRoot().providers,
-  ...NgxWidgetModule.forRoot().providers,
+  ...ChWidgetModule.forRoot().providers,
 ];
 
 @NgModule({

@@ -36,6 +36,7 @@ import {
 } from '@nebular/theme';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NbSecurityModule } from '@nebular/security';
+import { widgets } from './widgets-definition';
 
 const NB_MODULES = [
   NbCardModule,
@@ -74,7 +75,7 @@ const COMPONENTS = [
   TrafficChartComponent,
 ];
 
-export const WIDGETS_REGISTRY = new InjectionToken<any>('widgets registry');
+export const WIDGET_REGISTRY = new InjectionToken<any>('widgets registry');
 
 @NgModule({
   imports: [
@@ -87,20 +88,10 @@ export const WIDGETS_REGISTRY = new InjectionToken<any>('widgets registry');
   entryComponents: [...COMPONENTS],
   providers: [
     {
-      provide: WIDGETS_REGISTRY,
-      useValue: {
-        temperature: TemperatureComponent,
-        electricity: ElectricityComponent,
-        rooms: RoomsComponent,
-        contacts: ContactsComponent,
-        solar: SolarComponent,
-        kitten: KittenComponent,
-        traffic: TrafficComponent,
-        weather: WeatherComponent,
-        securityCameras: SecurityCamerasComponent,
-      },
+      provide: WIDGET_REGISTRY,
+      useValue: widgets,
     },
   ],
 })
-export class NgxWidgetsLibModule {
+export class ChWidgetsLibModule {
 }

@@ -26,7 +26,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/pages/ui-features/buttons',
       },
       {
-        title: 'Grid',
+        title: 'ChGrid',
         link: '/pages/ui-features/grid',
       },
       {

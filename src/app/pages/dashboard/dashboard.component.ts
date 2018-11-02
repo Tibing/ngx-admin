@@ -1,7 +1,7 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators/takeWhile';
-import { NbGridComponent } from '../../../../projects/dnd/src/lib/grid.component';
+import { ChGridComponent } from '../../../../projects/dnd/src/lib/grid.component';
 
 interface CardSettings {
   title: string;
@@ -16,7 +16,7 @@ interface CardSettings {
 })
 export class DashboardComponent implements OnDestroy {
 
-  @ViewChild(NbGridComponent) grid: NbGridComponent;
+  @ViewChild(ChGridComponent) grid: ChGridComponent;
   lightCard: CardSettings = {
     title: 'Light',
     iconClass: 'nb-lightbulb',

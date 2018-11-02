@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { NbCardModule, NbListModule } from '@nebular/theme';
 
-import { NbWidgetDirective } from './widget.directive';
-import { NbGridComponent, NgxWidgetStubComponent } from './grid.component';
-import { NgxGridsterService } from './gridster.service';
-import { NgxWidgetLibComponent } from './widget-lib.component';
-import { NgxWidgetsLibModule } from './widgets-lib/widgets-lib.module';
+import { ChGridComponent } from './grid.component';
+import { ChWidgetLibComponent } from './widget-lib.component';
+import { ChWidgetsLibModule } from './widgets-lib/widgets-lib.module';
+import { ChGridsterService } from './gridster.service';
 
 
 @NgModule({
@@ -15,17 +14,16 @@ import { NgxWidgetsLibModule } from './widgets-lib/widgets-lib.module';
     CommonModule,
     NbCardModule,
     NbListModule,
-    NgxWidgetsLibModule,
+    ChWidgetsLibModule,
   ],
-  exports: [NbWidgetDirective, NbGridComponent, NgxWidgetLibComponent, NgxWidgetStubComponent],
-  declarations: [NbWidgetDirective, NbGridComponent, NgxWidgetLibComponent, NgxWidgetStubComponent],
-  entryComponents: [NgxWidgetStubComponent],
+  exports: [ChGridComponent, ChWidgetLibComponent],
+  declarations: [ChGridComponent, ChWidgetLibComponent],
 })
-export class NgxWidgetModule {
+export class ChWidgetModule {
   static forRoot(): ModuleWithProviders {
     return <ModuleWithProviders>{
-      ngModule: NgxWidgetModule,
-      providers: [NgxGridsterService],
+      ngModule: ChWidgetModule,
+      providers: [ChGridsterService],
     };
   }
 }

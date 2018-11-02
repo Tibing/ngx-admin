@@ -1,24 +1,9 @@
-import { Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { NgxGridConfig, NgxGridsterService } from './gridster.service';
-import { WIDGETS_REGISTRY } from './widgets-lib/widgets-lib.module';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChGridsterService, NgxGridConfig } from './gridster.service';
+
 
 @Component({
-  selector: 'ngx-widget-stub',
-  template: `
-    <nb-card style="height: 100%;">
-      <nb-card-header>Widget Stub</nb-card-header>
-      <nb-card-body>
-        <div style="height: 100%; background-color: green"></div>
-      </nb-card-body>
-    </nb-card>
-  `,
-})
-
-export class NgxWidgetStubComponent {
-}
-
-@Component({
-  selector: 'ngx-grid',
+  selector: 'ch-grid',
   styles: [`
     /deep/ [data-col] {
       overflow: hidden;
@@ -35,12 +20,11 @@ export class NgxWidgetStubComponent {
   host: { 'class': 'gridster' },
 })
 
-export class NbGridComponent implements OnInit {
+export class ChGridComponent implements OnInit {
   @ViewChild(TemplateRef, { read: ViewContainerRef }) anchor: ViewContainerRef;
 
-  constructor(protected gridster: NgxGridsterService,
-              protected elementRef: ElementRef,
-              @Inject(WIDGETS_REGISTRY) protected widgetsRegistry) {
+  constructor(protected gridster: ChGridsterService,
+              protected elementRef: ElementRef) {
     this.gridster.setGridComponent(this);
   }
 

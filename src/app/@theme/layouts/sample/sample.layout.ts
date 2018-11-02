@@ -54,7 +54,7 @@ import { StateService } from '../../../@core/data/state.service';
                   state="collapsed"
                   fixed
                   [end]="sidebar.id !== 'end'">
-        <ngx-widget-lib></ngx-widget-lib>
+        <ch-widget-lib></ch-widget-lib>
       </nb-sidebar>
     </nb-layout>
   `,
@@ -72,7 +72,7 @@ export class SampleLayoutComponent implements OnDestroy {
       link: '/pages/ui-features/buttons',
     },
     {
-      title: 'Grid',
+      title: 'ChGrid',
       icon: 'ion ion-android-radio-button-off',
       link: '/pages/ui-features/grid',
     },

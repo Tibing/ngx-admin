@@ -1,6 +1,8 @@
-import { ComponentFactoryResolver, Inject, Injectable } from '@angular/core';
-import { NbGridComponent } from './grid.component';
-import { WIDGETS_REGISTRY } from './widgets-lib/widgets-lib.module';
+import { ComponentFactoryResolver, Injectable } from '@angular/core';
+import { ChGridComponent } from './grid.component';
+import { Widget } from './widget-lib';
+import { ChGrid } from './grid';
+import { ChWidgetLibService } from './widget-lib.service';
 
 export class NgxWidgetBoundingRect {
   top?: number;
@@ -23,19 +25,19 @@ export class NgxGridConfig {
 }
 
 @Injectable()
-export class NgxGridsterService {
+export class ChGridsterService extends ChGrid {
 
-  grid;
-  protected gridComponent: NbGridComponent;
+  protected grid;
+  protected gridComponent: ChGridComponent;
   protected widgets: NgxWidgetBoundingRect[] = [];
 
-  constructor(@Inject(WIDGETS_REGISTRY) protected widgetsRegistry,
+  constructor(protected widgetLib: ChWidgetLibService,
               protected cfr: ComponentFactoryResolver,
   ) {
-
+    super();
   }
 
-  setGridComponent(gridComponent: NbGridComponent) {
+  setGridComponent(gridComponent: ChGridComponent) {
     this.gridComponent = gridComponent;
   }
 
@@ -65,14 +67,14 @@ export class NgxGridsterService {
     this.grid.remove_all_widgets();
   }
 
-  addWidget(widget: NgxWidgetBoundingRect) {
-    this.widgets.push(widget);
-    this.renderWidget(widget);
+  addWidget(widget: Widget) {
+    this.widgets.push({ widget: widget.id });
+    this.renderWidget({ widget: widget.id });
     this.serialize();
   }
 
   renderWidget(widget: Partial<NgxWidgetBoundingRect>) {
-    const factory = this.cfr.resolveComponentFactory(this.widgetsRegistry[widget.widget]);
+    const factory = this.cfr.resolveComponentFactory(this.widgetLib.get(widget.widget).component);
     const componentRef = this.gridComponent.anchor.createComponent(factory);
     componentRef.location.nativeElement.setAttribute('ngxWidget', '');
     this.grid.add_widget(

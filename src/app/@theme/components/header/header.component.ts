@@ -4,7 +4,7 @@ import { NbMenuService, NbSidebarService } from '@nebular/theme';
 import { UserService } from '../../../@core/data/users.service';
 import { AnalyticsService } from '../../../@core/utils/analytics.service';
 import { LayoutService } from '../../../@core/data/layout.service';
-import { NgxGridsterService } from '../../../../../projects/dnd/src/lib/gridster.service';
+import { ChGridsterService } from '../../../../../projects/dnd/src/lib/gridster.service';
 
 @Component({
   selector: 'ngx-header',
@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
               private userService: UserService,
               private analyticsService: AnalyticsService,
               private layoutService: LayoutService,
-              private gridsterService: NgxGridsterService) {
+              private gridsterService: ChGridsterService) {
   }
 
   ngOnInit() {

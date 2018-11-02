@@ -1,9 +1,10 @@
-import { Component, Inject } from '@angular/core';
-import { WIDGETS_REGISTRY } from './widgets-lib/widgets-lib.module';
-import { NgxGridsterService } from './gridster.service';
+import { Component } from '@angular/core';
+import { ChGridsterService } from './gridster.service';
+import { Widget } from './widget-lib';
+import { ChWidgetLibService } from './widget-lib.service';
 
 @Component({
-  selector: 'ngx-widget-lib',
+  selector: 'ch-widget-lib',
   styles: [`
     :host /deep/ div.stub {
       width: 100%;
@@ -13,22 +14,22 @@ import { NgxGridsterService } from './gridster.service';
   `],
   template: `
     <nb-list>
-      <nb-list-item *ngFor="let comp of comps" (click)="addWidget(comp[0])">
-        <ng-container [ngComponentOutlet]="comp[1]"></ng-container>
+      <nb-list-item *ngFor="let comp of comps" (click)="addWidget(comp)">
+        <ng-container [ngComponentOutlet]="comp.component"></ng-container>
       </nb-list-item>
     </nb-list>
   `,
 })
 
-export class NgxWidgetLibComponent {
-  comps = [];
+export class ChWidgetLibComponent {
+  comps: Widget[] = [];
 
-  constructor(@Inject(WIDGETS_REGISTRY) widgetsRegistry,
-              protected gridsterService: NgxGridsterService) {
-    this.comps = Object.entries(widgetsRegistry);
+  constructor(protected widgetLib: ChWidgetLibService,
+              protected gridsterService: ChGridsterService) {
+    this.comps = this.widgetLib.getAll();
   }
 
-  addWidget(widget: string) {
-    this.gridsterService.addWidget({ widget });
+  addWidget(widget: Widget) {
+    this.gridsterService.addWidget(widget);
   }
 }
