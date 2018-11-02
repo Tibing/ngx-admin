@@ -8,6 +8,7 @@ import { WIDGET_REGISTRY } from './widgets-lib/widgets-lib.module';
 export class ChWidgetLibService {
 
   constructor(@Inject(WIDGET_REGISTRY) protected widgets: Widget[]) {
+    this.checkWidgetLibProvided();
   }
 
   get(id: string): Widget {
@@ -22,5 +23,15 @@ export class ChWidgetLibService {
 
   getAll(): Widget[] {
     return this.widgets;
+  }
+
+  protected checkWidgetLibProvided() {
+    if (!this.widgets) {
+      throw Error('No widget library provided.');
+    }
+
+    if (!this.widgets.length) {
+      throw Error('No widgets in provided widget library.');
+    }
   }
 }
