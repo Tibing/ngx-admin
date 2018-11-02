@@ -1,22 +1,14 @@
 import { ComponentFactoryResolver, Injectable } from '@angular/core';
 import { ChGridComponent } from './grid.component';
-import { Widget } from './widget-lib';
+import { Widget, WidgetDefinition } from './widget-lib';
 import { ChGrid } from './grid';
 import { ChWidgetLibService } from './widget-lib.service';
-
-export class NgxWidgetBoundingRect {
-  top?: number;
-  left?: number;
-  height?: number;
-  width?: number;
-  widget: string;
-}
 
 export class NgxGridConfig {
   widgetMarginX: number = 32;
   widgetMarginY: number = 32;
-  gridColumnHeight: number = 140;
-  gridColumnWidth: number = 140;
+  gridColumnHeight: number = 32;
+  gridColumnWidth: number = 32;
   gridElement: HTMLElement;
 
   constructor(config: Partial<NgxGridConfig>) {
@@ -29,7 +21,7 @@ export class ChGridsterService extends ChGrid {
 
   protected grid;
   protected gridComponent: ChGridComponent;
-  protected widgets: NgxWidgetBoundingRect[] = [];
+  protected widgets: Widget[] = [];
 
   constructor(protected widgetLib: ChWidgetLibService,
               protected cfr: ComponentFactoryResolver,
@@ -57,7 +49,7 @@ export class ChGridsterService extends ChGrid {
       })
       .data('gridster');
     this.widgets = this.load() || [];
-    this.widgets.forEach((widget: NgxWidgetBoundingRect) => {
+    this.widgets.forEach((widget: Widget) => {
       this.renderWidget(widget);
     });
   }
@@ -67,14 +59,21 @@ export class ChGridsterService extends ChGrid {
     this.grid.remove_all_widgets();
   }
 
-  addWidget(widget: Widget) {
-    this.widgets.push({ widget: widget.id });
-    this.renderWidget({ widget: widget.id });
+  addWidget(widget: WidgetDefinition) {
+    const w = {
+      id: widget.id,
+      height: widget.defaultHeight,
+      width: widget.defaultWidth,
+      left: 0,
+      top: 0,
+    };
+    this.widgets.push(w);
+    this.renderWidget(w);
     this.serialize();
   }
 
-  renderWidget(widget: Partial<NgxWidgetBoundingRect>) {
-    const factory = this.cfr.resolveComponentFactory(this.widgetLib.get(widget.widget).component);
+  renderWidget(widget: Widget) {
+    const factory = this.cfr.resolveComponentFactory(this.widgetLib.get(widget.id).component);
     const componentRef = this.gridComponent.anchor.createComponent(factory);
     componentRef.location.nativeElement.setAttribute('ngxWidget', '');
     this.grid.add_widget(
@@ -96,7 +95,7 @@ export class ChGridsterService extends ChGrid {
     this.grid.disable_resize();
   }
 
-  load(): NgxWidgetBoundingRect[] {
+  load(): Widget[] {
     return JSON.parse(localStorage.getItem('widgets'));
   }
 
@@ -106,12 +105,12 @@ export class ChGridsterService extends ChGrid {
     this.persist(serialized);
   }
 
-  protected persist(widgetsData: NgxWidgetBoundingRect) {
+  protected persist(widgetsData: Widget) {
     localStorage.setItem('widgets', JSON.stringify(widgetsData));
   }
 
   // TODO get widget descriptor somehow
-  protected cast({ col, row, size_x, size_y }, i): NgxWidgetBoundingRect {
-    return { top: row, left: col, width: size_x, height: size_y, widget: this.widgets[i].widget };
+  protected cast({ col, row, size_x, size_y }, i): Widget {
+    return { top: row, left: col, width: size_x, height: size_y, id: this.widgets[i].id };
   }
 }

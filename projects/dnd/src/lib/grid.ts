@@ -1,4 +1,4 @@
-import { Widget } from './widget-lib';
+import { WidgetDefinition } from './widget-lib';
 
 export interface ChGridConfig<T> {
 
@@ -13,7 +13,7 @@ export abstract class ChGrid {
 
   abstract clear();
 
-  abstract addWidget(widget: Widget);
+  abstract addWidget(widget: WidgetDefinition);
 
   abstract enable();
 

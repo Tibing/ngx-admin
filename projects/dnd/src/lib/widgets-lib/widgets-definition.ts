@@ -1,19 +1,19 @@
 import { TemperatureComponent } from './temperature/temperature.component';
 import { ElectricityComponent } from './electricity/electricity.component';
-import { Widget } from '../widget-lib';
+import { WidgetDefinition } from '../widget-lib';
 
 
-export const widgets: Widget[] = [
+export const widgets: WidgetDefinition[] = [
   {
     id: 'temperature',
     component: TemperatureComponent,
-    height: 3,
-    width: 2,
+    defaultHeight: 8,
+    defaultWidth: 5,
   },
   {
     id: 'electricity',
     component: ElectricityComponent,
-    height: 2,
-    width: 4,
+    defaultHeight: 8,
+    defaultWidth: 12,
   },
 ];

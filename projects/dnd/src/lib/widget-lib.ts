@@ -4,9 +4,22 @@ export interface Widget {
 
   id: string;
 
-  component: Type<any>;
-
   height: number;
 
   width: number;
+
+  left: number;
+
+  top: number;
+}
+
+export interface WidgetDefinition {
+
+  id: string;
+
+  component: Type<any>;
+
+  defaultHeight: number;
+
+  defaultWidth: number;
 }

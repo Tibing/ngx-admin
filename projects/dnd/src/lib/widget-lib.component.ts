@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ChGridsterService } from './gridster.service';
-import { Widget } from './widget-lib';
+import { WidgetDefinition } from './widget-lib';
 import { ChWidgetLibService } from './widget-lib.service';
 
 @Component({
@@ -22,14 +22,14 @@ import { ChWidgetLibService } from './widget-lib.service';
 })
 
 export class ChWidgetLibComponent {
-  comps: Widget[] = [];
+  comps: WidgetDefinition[] = [];
 
   constructor(protected widgetLib: ChWidgetLibService,
               protected gridsterService: ChGridsterService) {
     this.comps = this.widgetLib.getAll();
   }
 
-  addWidget(widget: Widget) {
+  addWidget(widget: WidgetDefinition) {
     this.gridsterService.addWidget(widget);
   }
 }
